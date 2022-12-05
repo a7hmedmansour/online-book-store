@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique @db.VarChar(256)
+  fname    String    @db.VarChar(256)
+  lname    String    @db.VarChar(256)
+  password String    @db.VarChar(256)
+  order    order[]
+  reviews  reviews[]
+}
+
+model publisher {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique @db.VarChar(256)
+  fname    String  @db.VarChar(256)
+  lname    String  @db.VarChar(256)
+  phone    String  @unique @db.VarChar(256)
+  password String  @db.VarChar(256)
+  books    books[]
+}
+
+model admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique @db.VarChar(256)
+  fname    String @db.VarChar(256)
+  lname    String @db.VarChar(256)
+  password String @db.VarChar(256)
+  role     Role   @default(admin)
+}
+
+enum Role {
+  master
+  admin
+}
+
+model author {
+  id    Int    @id @default(autoincrement())
+  fname String @db.VarChar(256)
+  lname String @db.VarChar(256)
+}
+
+model category {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
+  books    books[]
+  bookrank bookrank[]
+}
+
+model books {
+  id           Int          @id @default(autoincrement())
+  title        String       @db.Text
+  author       String       @db.VarChar(256)
+  price        Decimal
+  categoryid   Int
+  publisherid  Int
+  description  String       @db.Text
+  puplisherRel publisher    @relation(fields: [publisherid], references: [id])
+  categoryRel  category     @relation(fields: [categoryid], references: [id])
+  orderbooks   orderbooks[]
+  reviews      reviews[]
+  bookrank     bookrank[]
+}
+
+model bookrank {
+  id          Int      @id @default(autoincrement())
+  bookid      Int
+  sold        Int
+  rate        Int
+  category    String
+  bookrel     books    @relation(fields: [bookid], references: [id])
+  categoryrel category @relation(fields: [category], references: [name])
+}
+
+model reviews {
+  id      Int      @id @default(autoincrement())
+  userid  Int
+  bookid  Int
+  review  Int
+  date    DateTime
+  userrel user     @relation(fields: [userid], references: [id])
+  bookrel books    @relation(fields: [bookid], references: [id])
+}
+
+model order {
+  id         Int          @id @default(autoincrement())
+  userid     Int
+  createat   DateTime
+  totalcost  Decimal
+  userRel    user         @relation(fields: [userid], references: [id])
+  orderbooks orderbooks[]
+}
+
+model orderbooks {
+  id       Int      @id @default(autoincrement())
+  orderid  Int
+  bookid   Int
+  createat DateTime
+  orderRel order    @relation(fields: [orderid], references: [id])
+  bookrel  books    @relation(fields: [bookid], references: [id])
+}

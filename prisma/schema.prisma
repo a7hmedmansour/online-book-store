@@ -26,6 +26,7 @@ model publisher {
   fname    String  @db.VarChar(256)
   lname    String  @db.VarChar(256)
   phone    String  @unique @db.VarChar(256)
+  company  String  @db.VarChar(256)
   password String  @db.VarChar(256)
   books    books[]
 }
@@ -57,6 +58,11 @@ model category {
   bookrank bookrank[]
 }
 
+model request {
+  id           Int @id @default(autoincrement())
+  publisher_id Int
+}
+
 model books {
   id           Int          @id @default(autoincrement())
   title        String       @db.Text
@@ -70,6 +76,17 @@ model books {
   orderbooks   orderbooks[]
   reviews      reviews[]
   bookrank     bookrank[]
+}
+
+model bookadder {
+  id            Int      @id @default(autoincrement())
+  title         String   @db.Text
+  author        String   @db.VarChar(256)
+  price         Decimal
+  categoryid    Int
+  publisherid   Int
+  publisheddate DateTime
+  description   String   @db.Text
 }
 
 model bookrank {

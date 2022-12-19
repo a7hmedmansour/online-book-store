@@ -1,6 +1,10 @@
 import { Router } from "express";
 import * as usermethod from "../services/user/index.js";
+import JoiMiddleware from "../helpers/middlewares/Joimiddleware.js";
+import login from "../helpers/schema/login.schema.js";
+import signup from "../helpers/schema/signup.schema.js";
 const userrouter = Router();
-userrouter.post("/login", usermethod.login);
-userrouter.post("/signup", usermethod.signup);
+userrouter.post("/login", JoiMiddleware(login), usermethod.login);
+userrouter.post("/signup", JoiMiddleware(signup), usermethod.signup);
+userrouter.get("/get/:id", usermethod.getuserbyid);
 export default userrouter;

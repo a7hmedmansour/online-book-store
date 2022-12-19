@@ -16,19 +16,27 @@ model user {
   fname    String    @db.VarChar(256)
   lname    String    @db.VarChar(256)
   password String    @db.VarChar(256)
-  order    order[]
   reviews  reviews[]
 }
 
 model publisher {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique @db.VarChar(256)
-  fname    String  @db.VarChar(256)
-  lname    String  @db.VarChar(256)
-  phone    String  @unique @db.VarChar(256)
-  company  String  @db.VarChar(256)
-  password String  @db.VarChar(256)
-  books    books[]
+  id        Int         @id @default(autoincrement())
+  email     String      @unique @db.VarChar(256)
+  fname     String      @db.VarChar(256)
+  lname     String      @db.VarChar(256)
+  phone     String      @unique @db.VarChar(256)
+  company   String      @default("null") @db.VarChar(256)
+  status    Status      @default(Pending)
+  password  String      @db.VarChar(256)
+  books     books[]
+  bookadder bookadder[]
+  Request   Request[]
+}
+
+enum Status {
+  Accept
+  Pending
+  reject
 }
 
 model admin {
@@ -52,41 +60,36 @@ model author {
 }
 
 model category {
-  id       Int        @id @default(autoincrement())
-  name     String     @unique
-  books    books[]
-  bookrank bookrank[]
-}
-
-model request {
-  id           Int @id @default(autoincrement())
-  publisher_id Int
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  books     books[]
+  bookrank  bookrank[]
+  bookadder bookadder[]
 }
 
 model books {
-  id           Int          @id @default(autoincrement())
-  title        String       @db.Text
-  author       String       @db.VarChar(256)
-  price        Decimal
+  id           Int        @id @default(autoincrement())
+  title        String     @db.Text
+  author       String     @db.VarChar(256)
   categoryid   Int
   publisherid  Int
-  description  String       @db.Text
-  puplisherRel publisher    @relation(fields: [publisherid], references: [id])
-  categoryRel  category     @relation(fields: [categoryid], references: [id])
-  orderbooks   orderbooks[]
+  description  String     @db.Text
+  puplisherRel publisher  @relation(fields: [publisherid], references: [id])
+  categoryRel  category   @relation(fields: [categoryid], references: [id])
   reviews      reviews[]
   bookrank     bookrank[]
 }
 
 model bookadder {
-  id            Int      @id @default(autoincrement())
-  title         String   @db.Text
-  author        String   @db.VarChar(256)
-  price         Decimal
+  id            Int       @id @default(autoincrement())
+  title         String    @db.Text
+  author        String    @db.VarChar(256)
   categoryid    Int
   publisherid   Int
-  publisheddate DateTime
-  description   String   @db.Text
+  publisheddate DateTime  @default(now())
+  description   String    @db.Text
+  puplisherRel  publisher @relation(fields: [publisherid], references: [id])
+  categoryRel   category  @relation(fields: [categoryid], references: [id])
 }
 
 model bookrank {
@@ -109,20 +112,14 @@ model reviews {
   bookrel books    @relation(fields: [bookid], references: [id])
 }
 
-model order {
-  id         Int          @id @default(autoincrement())
-  userid     Int
-  createat   DateTime
-  totalcost  Decimal
-  userRel    user         @relation(fields: [userid], references: [id])
-  orderbooks orderbooks[]
+model Request {
+  id           Int       @id @default(autoincrement())
+  publisherID  Int
+  requset      req
+  publisherREl publisher @relation(fields: [publisherID], references: [id])
 }
 
-model orderbooks {
-  id       Int      @id @default(autoincrement())
-  orderid  Int
-  bookid   Int
-  createat DateTime
-  orderRel order    @relation(fields: [orderid], references: [id])
-  bookrel  books    @relation(fields: [bookid], references: [id])
+enum req {
+  update
+  delete
 }

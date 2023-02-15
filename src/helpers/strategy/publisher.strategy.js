@@ -2,20 +2,20 @@ import { Strategy, ExtractJwt } from "passport-jwt";
 import dotenv from "dotenv";
 import { prisma } from "../../index.js";
 dotenv.config();
-const JWTStrategy = new Strategy(
+const JWTStrategypublisher = new Strategy(
 	{
 		secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 	},
 	async (payload, done) => {
 		try {
-			const user = await prisma.users.findUnique({
+			const publisher = await prisma.publisher.findUnique({
 				where: {
 					id: payload.userId,
 				},
 			});
-			if (user) {
-				return done(null, user);
+			if (publisher.status == "Accept") {
+				return done(null, publisher);
 			} else {
 				return done(null, false);
 			}
@@ -25,4 +25,4 @@ const JWTStrategy = new Strategy(
 	},
 );
 
-export default JWTStrategy;
+export default JWTStrategypublisher;

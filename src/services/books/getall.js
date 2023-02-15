@@ -3,29 +3,36 @@ import {
 	okResponse,
 	ErrorResponse,
 } from "../../helpers/functions/ResponseHandler.js";
-export async function getall(req, res, next) {
+export async function getTopyear(req, res, next) {
+	const { year } = req.params;
+	const apikey = process.env.XRapidAPIKey;
+	const hostkey = process.env.XRapidAPIHost;
 	try {
-		const apikey = process.env.key;
 		const options = {
 			method: "GET",
-			url: `https://www.googleapis.com/books/v1/volumes/zyTCAlFPjgYC?key=${apikey}`,
+			url: `https://hapi-books.p.rapidapi.com/top/${year}`,
+			headers: {
+				"X-RapidAPI-Key": `${apikey}`,
+				"X-RapidAPI-Host": `${hostkey}`,
+			},
 		};
 		axios
 			.request(options)
 			.then(function (response) {
 				//console.log(response.data);
-				if (response.data)
-					return okResponse(
+				if (response.data.error_code) {
+					ErrorResponse(
 						res,
-						"successfully fetch ",
-						response.data,
+						response.data.error_code,
+						"Erro happend",
 					);
-				else return ErrorResponse(res, 404, "Erro 404 ");
+				} else okResponse(res, "successfully fetch", response.data);
 			})
 			.catch(function (error) {
 				console.error(error);
 			});
 	} catch (err) {
+		console.log(err);
 		next();
 	}
 }

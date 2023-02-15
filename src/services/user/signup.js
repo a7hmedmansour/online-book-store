@@ -1,5 +1,6 @@
 import { prisma } from "../../index.js";
 import bcyrpt from "bcrypt";
+import createAccessToken from "../../helpers/functions/createAccestoken.js";
 import {
 	okResponse,
 	badRequestResponse,
@@ -22,8 +23,19 @@ export async function signup(req, res, next) {
 		const newuser = await prisma.user.create({
 			data: { fname, lname, email, password: hashpassword },
 		});
+		const newToken = await prisma.tokenaccess.create({
+			data: {
+				user_id: newuser.id,
+				user: "user",
+			},
+		});
+		const accessToken = createAccessToken(newuser.id, newToken.id);
+		delete newuser.password;
 		if (newuser) {
-			return okResponse(res, "succfully sign up ", newuser);
+			return okResponse(res, "succfully sign up ", {
+				...newuser,
+				accessToken,
+			});
 		} else {
 			return badRequestResponse(res, "Erro happen in sign up");
 		}

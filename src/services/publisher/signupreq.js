@@ -18,7 +18,6 @@ export async function signup_publisher(req, res, next) {
 				res,
 				`Email already sign up and is is ${Email.status}`,
 			);
-
 		const newpublisher = await prisma.publisher.create({
 			data: {
 				email,

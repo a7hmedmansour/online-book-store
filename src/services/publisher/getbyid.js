@@ -20,8 +20,6 @@ export async function get_pub_byid(req, res, next) {
 			},
 		});
 		if (publisher) {
-			console.log(Object.keys(publisher));
-			console.log(publisher.fname);
 			return okResponse(res, "fetch publisher successfully", publisher);
 		} else {
 			return notFoundResponse(res, "publisher Not Found ");

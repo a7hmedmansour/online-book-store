@@ -7,7 +7,7 @@ import update from "../helpers/schema/updatebook.schema.js";
 
 const books = Router();
 //----------book data--------
-books.get("/getall", book.getall);
+books.get("/getall/:year", book.getTopyear);
 books.get("/get/:id", book.getbyID);
 books.get("/getbook/?name", book.getbyName);
 books.get("/gettop/:year/:month", book.getTop);

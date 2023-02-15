@@ -4,6 +4,7 @@ import {
 	badRequestResponse,
 } from "../../helpers/functions/ResponseHandler.js";
 import bcrypt from "bcrypt";
+import createAccessToken from "../../helpers/functions/createAccestoken.js";
 
 export async function login(req, res, next) {
 	try {
@@ -20,11 +21,22 @@ export async function login(req, res, next) {
 		if (!enbcyrptpassword) {
 			return badRequestResponse(res, "Incorrect Password");
 		}
+		const newToken = await prisma.tokenaccess.create({
+			data: {
+				user_id: user.id,
+				user: "user",
+			},
+		});
+		const accessToken = createAccessToken(user.id, newToken.id);
 		delete user.password;
 		if (user && enbcyrptpassword) {
-			return okResponse(res, "Logged in successfully", user);
+			return okResponse(res, "Logged in successfully", {
+				...user,
+				accessToken,
+			});
 		}
 	} catch (err) {
+		console.log(err);
 		next();
 	}
 }

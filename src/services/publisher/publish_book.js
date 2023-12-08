@@ -28,7 +28,7 @@ export async function pub_book_req(req, res, next) {
 				title,
 				author,
 				categoryid: categoryid.id,
-				publisherid: 2,
+				publisherid: 1,
 				description,
 				publisheddate: new Date(),
 			},

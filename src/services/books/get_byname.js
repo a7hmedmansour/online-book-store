@@ -2,6 +2,7 @@ import axios from "axios";
 import {
 	okResponse,
 	ErrorResponse,
+	notFoundResponse,
 } from "../../helpers/functions/ResponseHandler.js";
 export async function getbyName(req, res, next) {
 	try {
@@ -29,7 +30,14 @@ export async function getbyName(req, res, next) {
 						response.data.error_code,
 						"Erro happend",
 					);
-				} else return okResponse(res, "successfully fetch ", response.data);
+				} else if (response.data.length === 0)
+					return notFoundResponse(res, "NOT Found book");
+				else
+					return okResponse(
+						res,
+						"successfully fetch ",
+						response.data,
+					);
 			})
 			.catch(function (error) {
 				console.error(error);
